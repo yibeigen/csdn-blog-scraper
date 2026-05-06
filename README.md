@@ -1,13 +1,20 @@
-# CSDN Blog Scraper
+# CSDN博客爬虫
 
 [![Python Version](https://img.shields.io/badge/python-3.8+-blue.svg)](https://python.org)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.0.0-orange.svg)](https://github.com/yourusername/csdn-blog-scraper)
+[![Version](https://img.shields.io/badge/version-1.0.0-orange.svg)](https://gitee.com/yibeigen/csdn-blog-scraper)
 
-一个专业、可扩展的CSDN博客文章爬取工具，支持多种输出格式，适合社区使用。
+一个专业、可扩展的CSDN博客文章爬取工具，支持多种输出格式，提供可视化界面，适合社区使用。
 
 ## ✨ 功能特性
 
+### 🖥️ 可视化界面（推荐）
+- ✅ **一键式操作** - 简单直观的图形界面
+- ✅ **实时日志** - 显示运行进度和状态
+- ✅ **进度显示** - 动态显示爬取进度
+- ✅ **输出目录管理** - 快速打开输出文件夹
+
+### 📦 核心功能
 - 📱 **可配置的博客URL** - 支持任意CSDN用户博客
 - 📝 **多种分页结构识别** - 自动适配不同的页面布局
 - 📊 **完整信息提取** - 标题、发布日期、阅读量、URL
@@ -17,24 +24,36 @@
 - 📋 **完整日志记录** - 详细的运行日志，方便调试
 - 🎯 **简单易用的API** - 同时支持命令行和Python编程
 
-## 📦 安装
+---
 
-### 环境要求
+## 🚀 快速开始
 
+### 方法一：使用可执行文件（最简单）
+
+1. 从 [Gitee Releases](https://gitee.com/yibeigen/csdn-blog-scraper/releases) 下载最新版 `CSDN博客爬虫.exe`
+2. 双击运行即可使用，无需安装Python！
+
+### 方法二：运行源码（需要Python）
+
+#### 环境要求
 - Python 3.8+
 - pip
 
-### 安装依赖
+#### 安装依赖
 
 ```bash
-git clone https://github.com/yourusername/csdn-blog-scraper.git
+git clone https://gitee.com/yibeigen/csdn-blog-scraper.git
 cd csdn-blog-scraper
 pip install -r requirements.txt
 ```
 
-## 🚀 快速开始
+#### 运行可视化界面
 
-### 命令行使用
+```bash
+python gui.py
+```
+
+#### 运行命令行版本
 
 ```bash
 # 基本用法 - 爬取博客并保存为TXT
@@ -56,7 +75,7 @@ python main.py -u "https://blog.csdn.net/yourname" --min-delay 2 --max-delay 4
 python main.py -u "https://blog.csdn.net/yourname" -v
 ```
 
-### Python API 使用
+#### Python API 使用
 
 ```python
 from src import CSDNBlogScraper, Config
@@ -82,6 +101,8 @@ scraper.save_to_json(articles, "my_articles.json")
 
 更多示例请查看 [examples/](examples/) 目录。
 
+---
+
 ## 📖 完整文档
 
 ### 命令行选项
@@ -98,7 +119,6 @@ scraper.save_to_json(articles, "my_articles.json")
 | `--retries` | - | 最大重试次数 | 3 |
 | `--verbose` | `-v` | 详细模式 | False |
 | `--list-formats` | - | 列出可用格式 | - |
-| `--help` | `-h` | 显示帮助信息 | - |
 
 ### Config 配置类
 
@@ -116,26 +136,60 @@ config = Config(
 )
 ```
 
+---
+
+## 📦 打包自己的可执行文件
+
+### 使用构建脚本
+
+```bash
+# 安装PyInstaller
+pip install pyinstaller
+
+# 运行构建脚本
+python build_gui.py
+```
+
+### 手动构建
+
+```bash
+# 安装PyInstaller
+pip install pyinstaller
+
+# 打包成单文件
+pyinstaller --onefile --windowed --name="CSDN博客爬虫" gui.py
+```
+
+打包完成后，可执行文件位于 `dist/CSDN博客爬虫.exe`。
+
+---
+
 ## 📂 项目结构
 
 ```
 csdn-blog-scraper/
-├── src/                  # 源代码目录
-│   ├── __init__.py      # 包初始化
-│   ├── scraper.py       # 核心爬虫类
-│   ├── config.py        # 配置管理
-│   ├── exporters.py     # 导出器
-│   └── utils.py         # 工具函数
-├── examples/            # 示例代码
+├── src/                    # 源代码目录
+│   ├── __init__.py       # 包初始化
+│   ├── scraper.py        # 核心爬虫类
+│   ├── config.py         # 配置管理
+│   ├── exporters.py      # 导出器
+│   └── utils.py          # 工具函数
+├── examples/              # 示例代码
 │   ├── basic_usage.py
 │   └── multiple_formats.py
-├── tests/               # 测试文件
-├── outputs/             # 输出目录（自动创建）
-├── docs/                # 文档目录
-├── main.py              # 命令行入口
-├── requirements.txt     # 依赖列表
-└── README.md            # 项目说明
+├── tests/                 # 测试文件
+├── outputs/               # 输出目录（自动创建）
+├── docs/                  # 文档目录
+├── gui.py                 # 可视化界面入口
+├── main.py                # 命令行入口
+├── build_gui.py          # 构建脚本
+├── build.spec            # PyInstaller配置
+├── requirements.txt       # 依赖列表
+├── README.md             # 项目说明
+└── LICENSE               # MIT许可证
 ```
+
+---
 
 ## 🎯 输出格式示例
 
@@ -152,7 +206,7 @@ csdn-blog-scraper/
       "title": "文章标题",
       "url": "https://blog.csdn.net/...",
       "date": "2024-05-01",
-      "views": "1000"
+      "views": "阅读量: 1000"
     }
   ]
 }
@@ -162,8 +216,10 @@ csdn-blog-scraper/
 
 ```csv
 index,title,url,date,views
-1,文章标题,https://blog.csdn.net/...,2024-05-01,1000
+1,文章标题,https://blog.csdn.net/...,2024-05-01,阅读量: 1000
 ```
+
+---
 
 ## 🛠️ 贡献指南
 
@@ -171,15 +227,19 @@ index,title,url,date,views
 
 1. Fork 本仓库
 2. 创建特性分支 (`git checkout -b feature/AmazingFeature`)
-3. 提交修改 (`git commit -m 'Add some AmazingFeature'`)
+3. 提交修改 (`git commit -m 'feat: Add some AmazingFeature'`)
 4. 推送到分支 (`git push origin feature/AmazingFeature`)
 5. 开启 Pull Request
 
 更多详情请查看 [CONTRIBUTING.md](docs/CONTRIBUTING.md)。
 
+---
+
 ## 📄 许可证
 
 本项目采用 MIT 许可证 - 查看 [LICENSE](LICENSE) 文件了解详情。
+
+---
 
 ## ⚠️ 免责声明
 
@@ -188,9 +248,13 @@ index,title,url,date,views
 - 合理设置请求频率，避免对服务器造成不必要的负担
 - 使用者需自行承担使用本工具的一切后果
 
+---
+
 ## 📞 支持
 
-如有问题或建议，请提交 [Issue](../../issues)。
+如有问题或建议，请提交 [Issue](https://gitee.com/yibeigen/csdn-blog-scraper/issues)。
+
+---
 
 ## 🙏 致谢
 
