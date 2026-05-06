@@ -20,11 +20,6 @@ wheels/
 .installed.cfg
 *.egg
 
-# Virtual Environment
-venv/
-ENV/
-env/
-
 # IDE
 .vscode/
 .idea/
@@ -32,19 +27,15 @@ env/
 *.swo
 *~
 
-# Output files
-outputs/*.csv
-outputs/*.json
-outputs/*.txt
-outputs/*.log
-outputs/*.html
+# PyInstaller
+*.spec
+build/
+dist/
 
 # Debug files
-*.pyc
-__pycache__/
-*.log
-*.html
+debug_*.py
+test_*.py
 
-# Temporary files
-*.tmp
-*.bak
+# Outputs
+outputs/
+*.log

@@ -13,7 +13,6 @@ from urllib.parse import urljoin
 
 import requests
 from bs4 import BeautifulSoup
-from fake_useragent import UserAgent
 
 from .config import Config
 from .utils import setup_logger, extract_username
@@ -45,7 +44,15 @@ class CSDNBlogScraper:
             log_file=f"{self.config.output_dir}/scraper.log"
         )
         self.session = requests.Session()
-        self.ua = UserAgent()
+        
+        # 预定义的 User-Agent 列表
+        self.user_agents = [
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
+            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:125.0) Gecko/20100101 Firefox/125.0',
+            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4.1 Safari/605.1.15',
+        ]
         
         self.username = extract_username(self.config.blog_url)
         self.logger.info(f"📱 Target blog: {self.config.blog_url}")
@@ -61,8 +68,11 @@ class CSDNBlogScraper:
         Returns:
             Dictionary of HTTP headers
         """
+        # 如果配置了 User-Agent 就用配置的，否则随机选择一个
+        user_agent = self.config.user_agent or random.choice(self.user_agents)
+        
         headers = {
-            'User-Agent': self.config.user_agent or self.ua.random,
+            'User-Agent': user_agent,
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
             'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
             'Accept-Encoding': 'gzip, deflate, br',
@@ -84,19 +94,19 @@ class CSDNBlogScraper:
     def _safe_request(self, url: str, retry: int = 0, referer: Optional[str] = None) -> Optional[requests.Response]:
         """
         Make a safe HTTP request with retries.
-        
+
         Args:
             url: Target URL
             retry: Current retry count
             referer: Referer URL (optional)
-            
+
         Returns:
             Response object if successful, None otherwise
         """
         if retry >= self.config.max_retries:
             self.logger.error(f"❌ Request failed after {self.config.max_retries} attempts: {url}")
             return None
-        
+
         try:
             response = self.session.get(
                 url,
@@ -105,14 +115,15 @@ class CSDNBlogScraper:
                 verify=self.config.verify_ssl
             )
             response.raise_for_status()
-            
-            if '验证' in response.text or '验证码' in response.text or len(response.text) < 500:
-                self.logger.warning(f"⚠️ Possible anti-bot detection, retrying...")
+
+            # 简单的反爬虫检测，只在内容特别短的时候才重试
+            if len(response.text) < 200:
+                self.logger.warning(f"⚠️ Response too short ({len(response.text)} chars), retrying...")
                 self._random_delay()
                 return self._safe_request(url, retry + 1, referer)
-            
+
             return response
-            
+
         except requests.RequestException as e:
             self.logger.warning(f"⚠️ Request failed: {str(e)}, retrying...")
             self._random_delay()
@@ -121,10 +132,10 @@ class CSDNBlogScraper:
     def _parse_article_item(self, item: BeautifulSoup) -> Optional[Dict[str, Any]]:
         """
         Parse a single article item from the page.
-        
+
         Args:
             item: BeautifulSoup element
-            
+
         Returns:
             Article dictionary with title, url, date, views
         """
@@ -145,37 +156,14 @@ class CSDNBlogScraper:
         if 'title' not in article_info or not article_info['title']:
             return None
         
-        # 尝试多种方式获取日期和阅读量
-        # 新结构：colu_auth_b 包含时间和阅读量
-        info_div = item.find('div', class_='colu_auth_b') or item.find('div', class_='info-box')
-        if info_div:
-            spans = info_div.find_all('span')
-            for span in spans:
-                span_text = span.get_text(strip=True)
-                if '阅读' in span_text:
-                    article_info['views'] = span_text
-                else:
-                    date_match = re.search(r'(\d{4}-\d{2}-\d{2})', span_text)
-                    if date_match:
-                        article_info['date'] = date_match.group(1)
-                    else:
-                        article_info['date'] = span_text
+        # 直接找日期和阅读量（简单直接的方式）
+        date_tag = item.find('span', class_='date')
+        if date_tag:
+            article_info['date'] = date_tag.get_text(strip=True)
         
-        # 如果上面没找到，尝试旧的结构
-        if 'date' not in article_info:
-            date_tag = item.find('span', class_='date') or item.find('div', class_='info-box')
-            if date_tag:
-                date_text = date_tag.get_text(strip=True)
-                date_match = re.search(r'(\d{4}-\d{2}-\d{2})', date_text)
-                if date_match:
-                    article_info['date'] = date_match.group(1)
-                else:
-                    article_info['date'] = date_text
-        
-        if 'views' not in article_info:
-            read_tag = item.find('span', class_='read-num') or item.find('span', class_='read-count')
-            if read_tag:
-                article_info['views'] = read_tag.get_text(strip=True)
+        read_tag = item.find('span', class_='read-num') or item.find('span', class_='read-count')
+        if read_tag:
+            article_info['views'] = read_tag.get_text(strip=True)
         
         return article_info
     
