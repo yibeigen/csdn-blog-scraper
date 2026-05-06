@@ -1,0 +1,7 @@
+# CSDN Blog Scraper - Dependencies
+# Install using: pip install -r requirements.txt
+
+requests>=2.28.0
+beautifulsoup4>=4.11.0
+lxml>=4.9.0
+fake-useragent>=1.0.0
