@@ -2,9 +2,12 @@
 
 [![Python Version](https://img.shields.io/badge/python-3.8+-blue.svg)](https://python.org)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.0.0-orange.svg)](https://gitee.com/yibeigen/csdn-blog-scraper)
+[![Version](https://img.shields.io/badge/version-1.2.0-orange.svg)](https://gitee.com/yibeigen/csdn-blog-scraper)
+[![Gitee Stars](https://img.shields.io/badge/dynamic/json?label=Stars&query=stargazers_count&url=https%3A%2F%2Fgitee.com%2Fapi%2Fv5%2Frepos%2Fyibeigen%2Fcsdn-blog-scraper&color=orange)](https://gitee.com/yibeigen/csdn-blog-scraper)
 
 一个专业、可扩展的CSDN博客文章爬取工具，支持多种输出格式，提供可视化界面，适合社区使用。
+
+---
 
 ## ✨ 功能特性
 
@@ -13,6 +16,9 @@
 - ✅ **实时日志** - 显示运行进度和状态
 - ✅ **进度显示** - 动态显示爬取进度
 - ✅ **输出目录管理** - 快速打开输出文件夹
+- ✅ **图片放大查看** - 点击图片弹出放大窗口
+- ✅ **欢迎弹窗** - 启动时显示欢迎和开发者信息
+- ✅ **智能记忆** - "今天不弹出"功能，本地JSON存储
 
 ### 📦 核心功能
 - 📱 **可配置的博客URL** - 支持任意CSDN用户博客
@@ -26,11 +32,36 @@
 
 ---
 
+## 👤 关于作者
+
+### 开发者信息
+
+| 信息 | 内容 |
+|------|------|
+| **昵称** | 艺杯羹 |
+| **QQ** | 3057454077 |
+| **公众号** | 艺杯羹 |
+| **Gitee** | [yibeigen](https://gitee.com/yibeigen) |
+
+### 联系方式
+
+- **QQ群**：等待你加入
+- **公众号**：扫码关注获取更多工具和教程
+
+公众号二维码：  
+![公众号二维码](docs/公众号.png)
+
+赞赏码：  
+如果觉得工具好用，欢迎扫码支持！  
+![赞赏码](docs/赞赏码.png)
+
+---
+
 ## 🚀 快速开始
 
 ### 方法一：使用可执行文件（最简单）
 
-1. 从 [Gitee Releases](https://gitee.com/yibeigen/csdn-blog-scraper/releases) 下载最新版 `CSDN博客爬虫.exe`
+1. 从 [Gitee Releases](https://gitee.com/yibeigen/csdn-blog-scraper/releases) 下载最新版 `CSDN博客爬虫_v5.exe`
 2. 双击运行即可使用，无需安装Python！
 
 ### 方法二：运行源码（需要Python）
@@ -140,24 +171,14 @@ config = Config(
 
 ## 📦 打包自己的可执行文件
 
-### 使用构建脚本
-
-```bash
-# 安装PyInstaller
-pip install pyinstaller
-
-# 运行构建脚本
-python build_gui.py
-```
-
 ### 手动构建
 
 ```bash
 # 安装PyInstaller
 pip install pyinstaller
 
-# 打包成单文件
-pyinstaller --onefile --windowed --name="CSDN博客爬虫" gui.py
+# 打包成单文件，包含图片资源
+pyinstaller --onefile --windowed --name="CSDN博客爬虫" --add-data="src;src" --add-data="docs;docs" gui.py
 ```
 
 打包完成后，可执行文件位于 `dist/CSDN博客爬虫.exe`。
@@ -179,11 +200,11 @@ csdn-blog-scraper/
 │   └── multiple_formats.py
 ├── tests/                 # 测试文件
 ├── outputs/               # 输出目录（自动创建）
-├── docs/                  # 文档目录
+├── docs/                  # 文档和图片目录
+│   ├── 公众号.png        # 公众号二维码
+│   └── 赞赏码.png        # 赞赏码
 ├── gui.py                 # 可视化界面入口
 ├── main.py                # 命令行入口
-├── build_gui.py          # 构建脚本
-├── build.spec            # PyInstaller配置
 ├── requirements.txt       # 依赖列表
 ├── README.md             # 项目说明
 └── LICENSE               # MIT许可证
